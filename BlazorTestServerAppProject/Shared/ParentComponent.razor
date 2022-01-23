@@ -1,7 +1,13 @@
-﻿<h3>ParentComponent</h3>
+﻿@using BlazorTestServerAppProject.Services
+ 
+
+<h3>ParentComponent</h3>
 <div class ="alert alert-success">
     @AlertText
 </div>
+
+
+
 <ChildComponent>this is a child</ChildComponent>
 @code {
     [Parameter]  
