@@ -1,18 +1,42 @@
 ﻿@page "/interop"
 @inject IJSRuntime JsRunTime
-<h3>JSIntropStuff</h3>
-<h3>create js alert</h3>
+<h1>JSIntropStuff</h1>
+<h3>create alert</h3>
+<button class="btn btn-success" @onclick="ShowAlert">show alert</button>
+<h3>ask me a question</h3>
 <input @bind="questionText" />
 <button class="btn btn-warning" @onclick="AskQuestion" >ask question</button>
+<div>
+    the answer was:<span id="answerSpan"></span>
+</div>
+<h3>please focus</h3>
+<input @ref="InputToFocus"/>
+<button class="btn btn-danger" @onclick="Focus">Focus!</button>
+<h3>give me a random int</h3>
+<div>
+    The random number is:<span id="randomNumberSpan"></span>
+</div>
+<button class="btn btn-info" >Randomize!</button>
 @code {
     string questionText = string.Empty;
+    ElementReference InputToFocus;
     async Task AskQuestion()
     {
-        await JsRunTime.InvokeVoidAsync("createPrompt",questionText);
+        var response=await JsRunTime.InvokeAsync<string>("createPrompt",questionText);
+        await JsRunTime.InvokeVoidAsync("setElementTextById", "answerSpan",response);
     }
     async Task ShowAlert()
     {
         await JsRunTime.InvokeVoidAsync("createAlert");
+    }
+    async Task Focus()
+    {
+        await JsRunTime.InvokeVoidAsync("focusOnElement", InputToFocus); 
+    }
+    [JSInvokable]
+    public static Task<int> GenerateRandomInt()
+    {
+        return 0;
     }
 
 }
