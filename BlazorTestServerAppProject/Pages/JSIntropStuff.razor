@@ -1,0 +1,18 @@
+﻿@page "/interop"
+@inject IJSRuntime JsRunTime
+<h3>JSIntropStuff</h3>
+<h3>create js alert</h3>
+<input @bind="questionText" />
+<button class="btn btn-warning" @onclick="AskQuestion" >ask question</button>
+@code {
+    string questionText = string.Empty;
+    async Task AskQuestion()
+    {
+        await JsRunTime.InvokeVoidAsync("createPrompt",questionText);
+    }
+    async Task ShowAlert()
+    {
+        await JsRunTime.InvokeVoidAsync("createAlert");
+    }
+
+}
