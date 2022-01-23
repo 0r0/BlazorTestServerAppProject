@@ -1,5 +1,6 @@
 ﻿@page "/counter"
-
+@page "/counter/{startingCount:int}"
+@inject NavigationManager NavigationManager
 <PageTitle>Counter</PageTitle>
 
 <h1>Counter</h1>
@@ -7,12 +8,23 @@
 <p role="status">Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button class="btn btn-primary" @onclick="NavigateToHome">Navigation to Home</button>
+
 
 @code {
+    [Parameter]
+    public int StartingCount { get; set; } = 0;
     private int currentCount = 0;
-
+    protected override void OnInitialized()
+    {
+        currentCount = StartingCount;
+    }
     private void IncrementCount()
     {
         currentCount++;
+    }
+    private void NavigateToHome()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }
