@@ -1,4 +1,5 @@
 ﻿@page "/interop"
+@using BlazorTestServerAppProject.Helpers
 @inject IJSRuntime JsRunTime
 <h1>JSIntropStuff</h1>
 <h3>create alert</h3>
@@ -16,7 +17,12 @@
 <div>
     The random number is:<span id="randomNumberSpan"></span>
 </div>
-<button class="btn btn-info" >Randomize!</button>
+<div>
+    The random number is:<span id="randomNumberSpan2"></span>
+</div>
+<button class="btn btn-info" onclick="giveMeRandomInt(100)" >Randomize!</button>
+<button class="btn btn-info" @onclick="GenerateRandom" >Randomize2!</button>
+
 @code {
     string questionText = string.Empty;
     ElementReference InputToFocus;
@@ -33,10 +39,10 @@
     {
         await JsRunTime.InvokeVoidAsync("focusOnElement", InputToFocus); 
     }
-    [JSInvokable]
-    public static Task<int> GenerateRandomInt()
+    async Task GenerateRandom()
     {
-        return 0;
+        await JsRunTime.InvokeVoidAsync("giveMeRandomInt2",500,DotNetObjectReference.Create(new RandomHelper()));
     }
+   
 
 }
