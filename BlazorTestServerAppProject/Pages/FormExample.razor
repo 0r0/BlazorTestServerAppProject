@@ -1,0 +1,53 @@
+﻿@page "/form-example" 
+@using BlazorTestServerAppProject.Data
+@using System.Text.Json
+@inject IJSRuntime JsRunTime
+<h3>forms and validation</h3>
+<div><span id="resultJson"></span></div>
+<EditForm Model="@jobApplication" OnValidSubmit="@SubmitJobValidation">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    <p>
+        <label for="fullname">Fullname:</label>
+        <InputText id="fullname" @bind-Value="jobApplication.FullName"
+        @oninput="@(EventCallback.Factory.CreateBinder<string>(this,newValue=>
+                    Task.FromResult(TypeCheck(newValue)),String.Empty))"/>
+    </p>
+    <p>
+        <label for="description">Description</label>
+        <InputTextArea id="description" @bind-Value="jobApplication.Description"/>
+    </p>
+     <p>
+        <label for="salary">Salary Expectation</label>
+        <InputNumber id="salary" @bind-Value="jobApplication.SalaryExpectation"/>
+    </p>
+     <p>
+        <label for="opensource">Are you doing  Open Source? </label>
+       <InputCheckbox id="opensource" @bind-Value="jobApplication.DoesOpenSource"/>
+    </p>
+     <p>
+        <label for="availability">Interview Availability</label>
+        <InputDate id="availability" @bind-Value="jobApplication.Availability"/>
+    </p>
+    <button type="submit">submit</button>
+</EditForm>
+
+
+<div><span id="resultJson"></span>
+    </div>
+@code {
+    private JobApplication jobApplication = new JobApplication();
+
+
+
+    private async Task TypeCheck(string currentValue)
+    {
+        await JsRunTime.InvokeVoidAsync("setElementTextById", "resultJson", $"Current value is:{currentValue}"); 
+    }
+
+    private async Task SubmitJobValidation()
+    {
+        await JsRunTime.InvokeVoidAsync("setElementTextById", "resultJson", JsonSerializer.Serialize(jobApplication));
+    }
+
+}
