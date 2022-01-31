@@ -1,0 +1,38 @@
+﻿@page "/authtest"
+@attribute [Authorize]
+@inject IAuthorizationService  AuthorizationService
+
+<h1>Authorization Example</h1>
+<AuthorizeView>
+    <Authorized>
+        <h2>if you logged in you can see this</h2>
+    </Authorized>
+</AuthorizeView>
+<AuthorizeView Policy="IsAdmin">
+    <Authorized>
+        <h2>if you admin in you can see this</h2>
+    </Authorized>
+</AuthorizeView>
+<AuthorizeView Roles="SecretRole">
+    <Authorized>
+        <h2>if you are part of Secret Role in you can see this</h2>
+    </Authorized>
+</AuthorizeView>
+
+@code{
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthStateTask { get; set; }
+    protected override async  Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var state = await AuthStateTask;
+            var user = state.User;
+            var userAdmin= await AuthorizationService.AuthorizeAsync(user,"IsAdmin");
+            if(userAdmin.Succeeded)
+            {
+                Console.WriteLine("salut tu es admin ");
+            }
+        }
+    }
+}

@@ -1,6 +1,30 @@
 ﻿@page "/showcase.me"
+@inject IJSRuntime JsRuntime
+<AuthorizeView>
+    <Authorized>
+        <span id="username"></span>
+        <ParentComponent AlertText="this is an alert"/>
+    </Authorized>
+    <NotAuthorized>
+        <h3>sorry you can't see anythings!</h3>
+    </NotAuthorized>
+</AuthorizeView>
 <h3>Blazor fundamentals</h3>
-<ParentComponent AlertText="this is an alert"/>
+
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authStateTask{ get; set; }
+
+    protected override async  Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var authState = await authStateTask;
+            var user = authState.User;
+            var userName = user.Identity.Name;
+            await JsRuntime.InvokeVoidAsync("setElementTextById", "username",$"my name is:{userName}");
+        }
+    }
+
 
 }
