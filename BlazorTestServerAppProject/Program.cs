@@ -1,5 +1,7 @@
+using BlazorTestServerAppProject.Authorization;
 using BlazorTestServerAppProject.Data;
 using BlazorTestServerAppProject.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -16,8 +18,11 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddTransient<RandomService>();
 builder.Services.AddDbContext<ApplicationDBContext>(options=>options.UseSqlite("DataSource=app.db"));
-builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDBContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>().AddRoles<IdentityRole>().AddEntityFrameworkStores<ApplicationDBContext>();
 builder.Services.AddScoped<AuthenticationStateProvider,ServerAuthenticationStateProvider>();
+builder.Services.AddAuthorization(options => options.AddPolicy("IsAdmin", policy => policy.AddRequirements(new
+       EmailRequirement("admin.com"))));
+builder.Services.AddSingleton<IAuthorizationHandler, EmailAuthHandler>();
 
 var app = builder.Build();
 
